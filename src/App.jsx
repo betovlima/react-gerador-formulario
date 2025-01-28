@@ -68,85 +68,31 @@ const FormBuilder = () => {
   const renderQuestion = (question, index) => {
     const { answerOptions } = question;
 
-    switch (answerOptions) {
-      case "simNaoNaoSeAplica":
-        return (
-          <div key={index} style={styles.multipleChoice}>
-            <label>
-              <input
-                type="radio"
-                name={`question${index}`}
-                value="sim"
-                onChange={(e) =>
-                  setAnswers({ ...answers, [index]: e.target.value })
-                }
-              />{" "}
-              Sim
-            </label>
-            <br />
-            <label>
-              <input
-                type="radio"
-                name={`question${index}`}
-                value="nao"
-                onChange={(e) =>
-                  setAnswers({ ...answers, [index]: e.target.value })
-                }
-              />{" "}
-              Não
-            </label>
-            <br />
-            <label>
-              <input
-                type="radio"
-                name={`question${index}`}
-                value="naoSeAplica"
-                onChange={(e) =>
-                  setAnswers({ ...answers, [index]: e.target.value })
-                }
-              />{" "}
-              Não se aplica
-            </label>
-            <br />
-          </div>
-        );
-      case "simNao":
-        return (
-          <div key={index} style={styles.multipleChoice}>
-            <label>
-              <input
-                type="radio"
-                name={`question${index}`}
-                value="sim"
-                onChange={(e) =>
-                  setAnswers({ ...answers, [index]: e.target.value })
-                }
-              />{" "}
-              Sim
-            </label>
-            <br />
-            <label>
-              <input
-                type="radio"
-                name={`question${index}`}
-                value="nao"
-                onChange={(e) =>
-                  setAnswers({ ...answers, [index]: e.target.value })
-                }
-              />{" "}
-              Não
-            </label>
-            <br />
-          </div>
-        );
-      default:
-        return null;
-    }
+    return (
+      <div key={index}>
+        <select
+          value={question.answerOptions}
+          onChange={(e) => {
+            const newQuestions = [...questions];
+            newQuestions[index].answerOptions = e.target.value;
+            setQuestions(newQuestions);
+          }}
+          style={styles.select}
+        >
+          <option value="">Selecione as opções de resposta...</option>
+          <option value="simNaoNaoSeAplica">Sim/Não/Não se aplica</option>
+          <option value="simNao">Sim/Não</option>
+          {/* Adicione outras opções aqui, se necessário */}
+        </select>
+      </div>
+    );
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>TEMPLATE PARA QUESTIONÁRIO RISCO SOCIOAMBIENTAL</h1>
+      <h1 style={styles.title}>
+        TEMPLATE PARA QUESTIONÁRIO RISCO SOCIOAMBIENTAL
+      </h1>
       <div style={styles.form}>
         {questions.map((question, index) => (
           <div
@@ -180,7 +126,10 @@ const FormBuilder = () => {
               >
                 Mover para baixo
               </button>
-              <button onClick={() => editQuestion(index)} style={styles.buttonWithMargin}>
+              <button
+                onClick={() => editQuestion(index)}
+                style={styles.buttonWithMargin}
+              >
                 {editingIndex === index ? "Salvar" : "Editar"}
               </button>
               <button
@@ -283,7 +232,7 @@ const styles = {
     color: "#FFF",
     border: "none",
     borderRadius: "4px",
-    minWidth: '100px',
+    minWidth: "100px",
     cursor: "pointer",
     marginRight: "20px", // Espaçamento aumentado
     "&:hover": {
@@ -296,7 +245,7 @@ const styles = {
     backgroundColor: "#34a853",
     color: "#FFF",
     border: "none",
-    minWidth: '100px',
+    minWidth: "100px",
     borderRadius: "4px",
     cursor: "pointer",
     marginRight: "10px",
