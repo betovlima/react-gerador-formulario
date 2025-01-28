@@ -1,0 +1,92 @@
+/* Estilos gerais */
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .app {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 600px; 
+    width: 100%;
+  }
+  
+  /* Estilos para as seções */
+  .question-section,
+  .answer-section,
+  .score-section {
+    margin-bottom: 20px;
+  }
+  
+  .question-count {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .question-text {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilos para as opções de resposta */
+  .answer-section button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px; 
+    margin-bottom: 10px; 
+    width: 100%; /* Ocupa toda a largura disponível */
+    box-sizing: border-box; /* Inclui padding e border no cálculo da largura */
+  }
+  
+  .answer-section button:hover {
+    background-color: #45a049;
+  }
+  
+  .answer-section input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  
+  /* Estilos para o formulário */
+  .quiz-form input[type="text"],
+  .quiz-form select {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .quiz-form button {
+    background-color: #2196F3; /* Cor de fundo azul */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px; 
+  }
+  
+  .quiz-form button:hover {
+    background-color: #1976D2; /* Cor de fundo azul mais escura ao passar o mouse */
+  }
+  
+  /* Estilos para a pontuação */
+  .score-section {
+    font-size: 24px;
+    text-align: center;
+  }

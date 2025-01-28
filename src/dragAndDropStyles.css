@@ -1,0 +1,29 @@
+/* Estilos gerais */
+body {
+    /* ... seus estilos */
+  }
+  
+  .app {
+    /* ... seus estilos */
+  }
+  
+  /* ... outros estilos */
+  
+  .dragging-over {
+    background-color: #f0f0f0; 
+    border: 2px dashed #ccc; 
+  }
+  
+  .is-dragging {
+    opacity: 0.5; 
+  }
+  
+  .question {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .question:empty { 
+    background-color: #eee; 
+    height: 50px; 
+    border: 1px dashed #ccc; 
+  }
