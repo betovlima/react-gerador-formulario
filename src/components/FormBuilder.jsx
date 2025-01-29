@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
+import { saveAs } from "file-saver";
 
 const FormBuilder = () => {
   const [questions, setQuestions] = useState([]);
@@ -41,7 +42,7 @@ const FormBuilder = () => {
 
   const handleAnswer = () => {
     const newQuestions = [...questions];
-    newQuestions[answeringIndex].answers = selectedAnswer; 
+    newQuestions[answeringIndex].answers = selectedAnswer;
     setQuestions(newQuestions);
     setOpen(false);
     setSelectedAnswer([]);
@@ -117,8 +118,29 @@ const FormBuilder = () => {
     );
   };
 
+  const saveToJson = () => {
+    const data = {
+      questions: questions.map((question, index) => ({
+        text: question.text,
+        answers: question.answers.map((answer, answerIndex) => {
+          const inputElement = document.querySelector(`input[name="respostas-${index}"][value="${answer}"]`); // Seleciona o input do radio button
+          const type = inputElement ? inputElement.type : 'unknown'; // Obtém o tipo do input ou define como 'unknown' se não encontrar
+          return {
+            type: type,
+            value: answer,
+            label: answer,
+          }
+        })
+      }))
+    };
+    const jsonString = JSON.stringify(data, null, 2); // Formata o JSON com 2 espaços de indentação
+    const blob = new Blob([jsonString], { type: "application/json" });
+    saveAs(blob, "perguntas_e_respostas.json");
+  };
+
   return (
     <div style={styles.container}>
+    
       <h1 style={styles.title}>
         TEMPLATE PARA QUESTIONÁRIO RISCO SOCIOAMBIENTAL
       </h1>
@@ -224,6 +246,11 @@ const FormBuilder = () => {
         <button onClick={addQuestion} style={styles.button}>
           Adicionar
         </button>
+      </div>
+      <div style={styles.container}>
+        <Button onClick={saveToJson} style={styles.button}>
+          Salvar JSON
+        </Button>
       </div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Selecione a resposta</DialogTitle>
