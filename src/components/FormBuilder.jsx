@@ -114,6 +114,9 @@ const FormBuilder = () => {
         <button onClick={() => addAnswer(index)} style={styles.button}>
           Adicionar Resposta
         </button>
+        <button onClick={() => addAnswer(index)} style={styles.button}>
+          Aninhar Pergunta
+        </button>
       </div>
     );
   };
@@ -152,8 +155,8 @@ const FormBuilder = () => {
               index === movedIndex
                 ? {
                     ...styles.question,
-                    border: "2px solid #4CAF50",
-                    animation: "blink 0.5s ease",
+                    border: "4px solid #4CAF50",
+                    animation: "blink 1.5s ease",
                   }
                 : styles.question
             }
