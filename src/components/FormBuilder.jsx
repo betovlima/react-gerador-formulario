@@ -6,7 +6,9 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 
 const FormBuilder = () => {
   const [questions, setQuestions] = useState([]);
@@ -37,13 +39,13 @@ const FormBuilder = () => {
     setOpen(false);
   };
 
- const handleAnswer = () => {
- const newQuestions = [...questions];
-  newQuestions[answeringIndex].answers = [...newQuestions[answeringIndex].answers, ...selectedAnswer]; // Adiciona as novas respostas
-  setQuestions(newQuestions);
-  setOpen(false);
-  setSelectedAnswer([]);
-};
+  const handleAnswer = () => {
+    const newQuestions = [...questions];
+    newQuestions[answeringIndex].answers = selectedAnswer; 
+    setQuestions(newQuestions);
+    setOpen(false);
+    setSelectedAnswer([]);
+  };
 
   const addAnswer = (index) => {
     handleClickOpen(index);
@@ -55,7 +57,7 @@ const FormBuilder = () => {
       ...questions,
       {
         text: currentQuestion,
-        answers: [] // Array para armazenar as respostas
+        answers: [],
       },
     ]);
     setCurrentQuestion("");
@@ -180,6 +182,30 @@ const FormBuilder = () => {
             ) : (
               <h3>
                 {index + 1}. {question.text}
+                <br />
+                {question.answers.length > 0 && (
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      aria-label="respostas"
+                      name={`respostas-${index}`}
+                      value={question.selectedAnswers}
+                      onChange={(e) => {
+                        const newQuestions = [...questions];
+                        newQuestions[index].selectedAnswers = e.target.value;
+                        setQuestions(newQuestions);
+                      }}
+                    >
+                      {question.answers.map((answer, answerIndex) => (
+                        <FormControlLabel
+                          key={answerIndex}
+                          value={answer}
+                          control={<Radio />}
+                          label={answer}
+                        />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                )}
               </h3>
             )}
             {renderQuestion(question, index)}
