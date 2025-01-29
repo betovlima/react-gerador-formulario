@@ -1,24 +1,64 @@
 import React, { useState, useEffect } from "react";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Checkbox from '@mui/material/Checkbox';
 
 const FormBuilder = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
-  const [currentAnswerOptions, setCurrentAnswerOptions] = useState("");
-  const [answers, setAnswers] = useState({});
+  const [, setCurrentAnswerOptions] = useState("");
+  const [, setAnswers] = useState({});
   const [movedIndex, setMovedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [selectedAnswer, setSelectedAnswer] = React.useState("");
+  const [answeringIndex, setAnsweringIndex] = React.useState(null);
+
+  const handleCheckboxChange = (event) => {
+    const value = event.target.value;
+    if (event.target.checked) {
+      setSelectedAnswer([...selectedAnswer, value]);
+    } else {
+      setSelectedAnswer(selectedAnswer.filter((item) => item !== value));
+    }
+  };
+
+  const handleClickOpen = (index) => {
+    setOpen(true);
+    setAnsweringIndex(index);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+ const handleAnswer = () => {
+ const newQuestions = [...questions];
+  newQuestions[answeringIndex].answers = [...newQuestions[answeringIndex].answers, ...selectedAnswer]; // Adiciona as novas respostas
+  setQuestions(newQuestions);
+  setOpen(false);
+  setSelectedAnswer([]);
+};
+
+  const addAnswer = (index) => {
+    handleClickOpen(index);
+  };
 
   const addQuestion = () => {
-    if (currentQuestion.trim() === "" || currentAnswerOptions === "") return;
+    if (currentQuestion.trim() === "") return;
     setQuestions([
       ...questions,
       {
         text: currentQuestion,
-        answerOptions: currentAnswerOptions,
+        answers: [] // Array para armazenar as respostas
       },
     ]);
     setCurrentQuestion("");
-    setCurrentAnswerOptions("");
   };
 
   const moveQuestionUp = (index) => {
@@ -66,23 +106,11 @@ const FormBuilder = () => {
   }, [questions]);
 
   const renderQuestion = (question, index) => {
-
     return (
       <div key={index}>
-        <select
-          value={question.answerOptions}
-          onChange={(e) => {
-            const newQuestions = [...questions];
-            newQuestions[index].answerOptions = e.target.value;
-            setQuestions(newQuestions);
-          }}
-          style={styles.select}
-        >
-          <option value="">Selecione as opções de resposta...</option>
-          <option value="simNaoNaoSeAplica">Sim/Não/Não se aplica</option>
-          <option value="simNao">Sim/Não</option>
-          {/* Adicione outras opções aqui, se necessário */}
-        </select>
+        <button onClick={() => addAnswer(index)} style={styles.button}>
+          Adicionar Resposta
+        </button>
       </div>
     );
   };
@@ -167,20 +195,39 @@ const FormBuilder = () => {
           style={styles.input}
         />
 
-        <select
-          value={currentAnswerOptions}
-          onChange={(e) => setCurrentAnswerOptions(e.target.value)}
-          style={styles.select}
-        >
-          <option value="">Selecione as opções de resposta...</option>
-          <option value="simNaoNaoSeAplica">Sim/Não/Não se aplica</option>
-          <option value="simNao">Sim/Não</option>
-        </select>
-
         <button onClick={addQuestion} style={styles.button}>
           Adicionar
         </button>
       </div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Selecione a resposta</DialogTitle>
+        <DialogContent>
+          <FormControl>
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Sim"
+              value="Sim"
+              onChange={(e) => handleCheckboxChange(e)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Não"
+              value="Não"
+              onChange={(e) => handleCheckboxChange(e)}
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Não se aplica"
+              value="Não se aplica"
+              onChange={(e) => handleCheckboxChange(e)}
+            />
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleAnswer}>Adicionar</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
