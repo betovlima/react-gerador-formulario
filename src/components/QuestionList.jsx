@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { RadioGroup } from "@mui/material";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import DialogContentText from "@mui/material/DialogContentText";
-import Question from "./Question";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import React, { useEffect, useState } from "react";
+import QuestionTopButtons from "./QuestionTopButtons";
+
+import "./styles.css";
 
 const QuestionList = ({ questions, setQuestions }) => {
   const [nestedOpen, setNestedOpen] = React.useState(false);
@@ -35,42 +39,6 @@ const QuestionList = ({ questions, setQuestions }) => {
     setAnsweringIndex(index);
   };
 
-  const moveQuestionUp = (index) => {
-    if (index <= 0) return;
-    const newQuestions = [...questions];
-    const temp = newQuestions[index];
-    newQuestions[index] = newQuestions[index - 1];
-    newQuestions[index - 1] = temp;
-    setQuestions(newQuestions);
-    setMovedIndex(index - 1);
-    setTimeout(() => setMovedIndex(null), 500);
-  };
-
-  const moveQuestionDown = (index) => {
-    if (index >= questions.length - 1) return;
-    const newQuestions = [...questions];
-    const temp = newQuestions[index];
-    newQuestions[index] = newQuestions[index + 1];
-    newQuestions[index + 1] = temp;
-    setQuestions(newQuestions);
-    setMovedIndex(index + 1);
-    setTimeout(() => setMovedIndex(null), 500);
-  };
-
-  const deleteQuestion = (index) => {
-    const newQuestions = [...questions];
-    newQuestions.splice(index, 1);
-    setQuestions(newQuestions);
-  };
-
-  const editQuestion = (index) => {
-    if (editingIndex === index) {
-      setEditingIndex(null);
-    } else {
-      setEditingIndex(index);
-    }
-  };
-
   useEffect(() => {
     const initialAnswers = {};
     questions.forEach((_, index) => {
@@ -78,19 +46,6 @@ const QuestionList = ({ questions, setQuestions }) => {
     });
     setAnswers(initialAnswers);
   }, [questions]);
-
-  const renderQuestion = (question, index) => {
-    return (
-      <div key={index}>
-        <button onClick={() => addAnswer(index)} style={styles.button}>
-          Adicionar Resposta
-        </button>
-        <button onClick={() => handleNestedOpen(index)} style={styles.button}>
-          Aninhar Pergunta
-        </button>
-      </div>
-    );
-  };
 
   const handleAnswer = () => {
     const newQuestions = [...questions];
@@ -136,18 +91,18 @@ const QuestionList = ({ questions, setQuestions }) => {
   };
 
   return (
-    <div style={styles.container}>
+    <div>
       {questions.map((question, index) => (
         <div
           key={index}
-          style={
+          className={
             index === movedIndex
               ? {
-                  ...styles.question,
+                  ..."question",
                   border: "4px solid #4CAF50",
                   animation: "blink 1.5s ease",
                 }
-              : styles.question
+              : "question"
           }
         >
           <div
@@ -157,30 +112,14 @@ const QuestionList = ({ questions, setQuestions }) => {
               justifyContent: "flex-end",
             }}
           >
-            <button
-              onClick={() => moveQuestionUp(index)}
-              style={styles.buttonWithMargin}
-            >
-              Mover para cima
-            </button>
-            <button
-              onClick={() => moveQuestionDown(index)}
-              style={styles.buttonWithMargin}
-            >
-              Mover para baixo
-            </button>
-            <button
-              onClick={() => editQuestion(index)}
-              style={styles.buttonWithMargin}
-            >
-              {editingIndex === index ? "Salvar" : "Editar"}
-            </button>
-            <button
-              onClick={() => deleteQuestion(index)}
-              style={styles.buttonWithMargin}
-            >
-              Excluir
-            </button>
+            <QuestionTopButtons
+              index={index}
+              editingIndex={editingIndex}
+              questions={questions}
+              setQuestions={setQuestions}
+              setMovedIndex={setMovedIndex}
+              setEditingIndex={setEditingIndex}
+            />
           </div>
           {editingIndex === index ? (
             <input
@@ -191,20 +130,54 @@ const QuestionList = ({ questions, setQuestions }) => {
                 newQuestions[index].text = e.target.value;
                 setQuestions(newQuestions);
               }}
-              style={styles.input}
+              className="input"
             />
           ) : (
-            <Question
-              index={index}
-              question={question}
-              setQuestions={setQuestions}
-            />
+            <h3>
+              {index + 1}. {question.text}
+              <br />
+              {question.answers.length > 0 && (
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    aria-label="respostas"
+                    name={`respostas-${index}`}
+                    value={question.selectedAnswers}
+                    onChange={(e) => {
+                      const newQuestions = [...questions];
+                      newQuestions[index].selectedAnswers = e.target.value;
+                      setQuestions(newQuestions);
+                    }}
+                  >
+                    {question.answers.map((answer, answerIndex) => (
+                      <FormControlLabel
+                        key={answerIndex}
+                        value={answer}
+                        control={<Radio />}
+                        label={answer}
+                      />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              )}
+            </h3>
           )}
-          {renderQuestion(question, index)}
+          {
+            <div>
+              <button onClick={() => addAnswer(index)} className="button">
+                Adicionar Resposta
+              </button>
+              <button
+                onClick={() => handleNestedOpen(index)}
+                className="button"
+              >
+                Aninhar Pergunta
+              </button>
+            </div>
+          }
         </div>
       ))}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Selecione a resposta</DialogTitle>
+        <DialogTitle className="title">Selecione a resposta</DialogTitle>
         <DialogContent>
           <FormControl>
             <FormControlLabel
@@ -262,41 +235,4 @@ const QuestionList = ({ questions, setQuestions }) => {
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-  },
-
-  button: {
-    padding: "8px 10px",
-    fontSize: "14px",
-    backgroundColor: "#34a853",
-    color: "#FFF",
-    border: "none",
-    minWidth: "100px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    marginRight: "10px",
-    "&:hover": {
-      backgroundColor: "#45a049",
-    },
-  },
-  buttonWithMargin: {
-    padding: "8px 10px",
-    fontSize: "16px",
-    backgroundColor: "#34a853",
-    color: "#FFF",
-    border: "none",
-    borderRadius: "4px",
-    minWidth: "100px",
-    cursor: "pointer",
-    marginRight: "20px",
-    "&:hover": {
-      backgroundColor: "#45a049",
-    },
-  },
-};
 export default QuestionList;
