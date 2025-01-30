@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
@@ -14,13 +15,43 @@ import { saveAs } from "file-saver";
 const FormBuilder = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
-  const [, setCurrentAnswerOptions] = useState("");
   const [, setAnswers] = useState({});
   const [movedIndex, setMovedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [open, setOpen] = React.useState(false);
   const [selectedAnswer, setSelectedAnswer] = React.useState("");
   const [answeringIndex, setAnsweringIndex] = React.useState(null);
+
+  const [nestedOpen, setNestedOpen] = React.useState(false);
+  const [nestedQuestion, setNestedQuestion] = React.useState("");
+  const [nestingIndex, setNestingIndex] = React.useState(null);
+
+  const handleNestedOpen = (index) => {
+    setNestedOpen(true);
+    setNestingIndex(index);
+  };
+
+  const handleNestedClose = () => {
+    setNestedOpen(false);
+    setNestedQuestion(""); // Limpa o texto da sub-pergunta
+  };
+
+  const addNestedQuestion = () => {
+    if (nestedQuestion.trim() === "") return;
+
+    const newQuestions = [...questions];
+    if (!newQuestions[nestingIndex].nestedQuestions) {
+      newQuestions[nestingIndex].nestedQuestions = [];
+    }
+    newQuestions[nestingIndex].nestedQuestions.push({
+      text: nestedQuestion,
+      answers: [],
+      selectedAnswers: [],
+    });
+    setQuestions(newQuestions);
+    setNestedOpen(false);
+    setNestedQuestion("");
+  };
 
   const handleCheckboxChange = (event) => {
     const value = event.target.value;
@@ -114,7 +145,7 @@ const FormBuilder = () => {
         <button onClick={() => addAnswer(index)} style={styles.button}>
           Adicionar Resposta
         </button>
-        <button onClick={() => addAnswer(index)} style={styles.button}>
+        <button onClick={() => handleNestedOpen(index)} style={styles.button}>
           Aninhar Pergunta
         </button>
       </div>
@@ -126,15 +157,17 @@ const FormBuilder = () => {
       questions: questions.map((question, index) => ({
         text: question.text,
         answers: question.answers.map((answer, answerIndex) => {
-          const inputElement = document.querySelector(`input[name="respostas-${index}"][value="${answer}"]`); // Seleciona o input do radio button
-          const type = inputElement ? inputElement.type : 'unknown'; // Obtém o tipo do input ou define como 'unknown' se não encontrar
+          const inputElement = document.querySelector(
+            `input[name="respostas-${index}"][value="${answer}"]`
+          ); // Seleciona o input do radio button
+          const type = inputElement ? inputElement.type : "unknown"; // Obtém o tipo do input ou define como 'unknown' se não encontrar
           return {
             type: type,
             value: answer,
             label: answer,
-          }
-        })
-      }))
+          };
+        }),
+      })),
     };
     const jsonString = JSON.stringify(data, null, 2); // Formata o JSON com 2 espaços de indentação
     const blob = new Blob([jsonString], { type: "application/json" });
@@ -143,7 +176,6 @@ const FormBuilder = () => {
 
   return (
     <div style={styles.container}>
-    
       <h1 style={styles.title}>
         TEMPLATE PARA QUESTIONÁRIO RISCO SOCIOAMBIENTAL
       </h1>
@@ -282,6 +314,30 @@ const FormBuilder = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleAnswer}>Adicionar</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={nestedOpen} onClose={handleNestedClose}>
+        <DialogTitle>Aninhar Pergunta</DialogTitle>
+        <DialogContent style={{ width: '600px', maxWidth: '80%', padding: '20px' }}>
+          <DialogContentText>Digite a sub-pergunta:</DialogContentText>
+          <textarea
+            autoFocus
+            margin="dense"
+            id="name"
+            type="text"
+            fullWidth
+            width="450px"
+            heigth="400px"
+            variant="standard"
+            value={nestedQuestion}
+            style={{ width: '465px', height: '147px' }}
+            onChange={(e) => setNestedQuestion(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleNestedClose}>Cancelar</Button>
+          <Button onClick={addNestedQuestion}>Adicionar</Button>
         </DialogActions>
       </Dialog>
     </div>
