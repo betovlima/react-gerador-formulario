@@ -161,6 +161,19 @@ const QuestionList = ({ questions, setQuestions }) => {
               )}
             </h3>
           )}
+          {question.nestedQuestions && question.nestedQuestions.length > 0 && (
+            <div style={{ marginLeft: "20px" }}>
+              {question.nestedQuestions.map((nestedQuestion, nestedIndex) => (
+                <div key={nestedIndex} className="question">
+                  {/* Renderiza a sub-pergunta */}
+                  <h3>{nestedQuestion.text}</h3>
+
+                  {/* Renderiza as respostas da sub-pergunta, se houver */}
+                  {/*... */}
+                </div>
+              ))}
+            </div>
+          )}
           {
             <div>
               <button onClick={() => addAnswer(index)} className="button">
