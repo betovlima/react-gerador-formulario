@@ -11,6 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { saveAs } from "file-saver";
+import Answer from "./Answer";
 
 const FormBuilder = () => {
   const [questions, setQuestions] = useState([]);
@@ -62,11 +63,6 @@ const FormBuilder = () => {
     }
   };
 
-  const handleClickOpen = (index) => {
-    setOpen(true);
-    setAnsweringIndex(index);
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -81,6 +77,10 @@ const FormBuilder = () => {
 
   const addAnswer = (index) => {
     handleClickOpen(index);
+  };
+  const handleClickOpen = (index) => {
+    setOpen(true);
+    setAnsweringIndex(index);
   };
 
   const addQuestion = () => {
@@ -159,8 +159,8 @@ const FormBuilder = () => {
         answers: question.answers.map((answer, answerIndex) => {
           const inputElement = document.querySelector(
             `input[name="respostas-${index}"][value="${answer}"]`
-          ); // Seleciona o input do radio button
-          const type = inputElement ? inputElement.type : "unknown"; // Obtém o tipo do input ou define como 'unknown' se não encontrar
+          );
+          const type = inputElement ? inputElement.type : "unknown";
           return {
             type: type,
             value: answer,
@@ -169,7 +169,7 @@ const FormBuilder = () => {
         }),
       })),
     };
-    const jsonString = JSON.stringify(data, null, 2); // Formata o JSON com 2 espaços de indentação
+    const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
     saveAs(blob, "perguntas_e_respostas.json");
   };
@@ -269,19 +269,9 @@ const FormBuilder = () => {
           </div>
         ))}
       </div>
-      <div style={styles.formControlsBox}>
-        <textarea
-          type="text"
-          value={currentQuestion}
-          onChange={(e) => setCurrentQuestion(e.target.value)}
-          placeholder="Digite a pergunta"
-          style={styles.input}
-        />
+      
+      <Answer addQuestion={addQuestion} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/>
 
-        <button onClick={addQuestion} style={styles.button}>
-          Adicionar
-        </button>
-      </div>
       <div style={styles.container}>
         <Button onClick={saveToJson} style={styles.button}>
           Salvar JSON
@@ -319,7 +309,9 @@ const FormBuilder = () => {
 
       <Dialog open={nestedOpen} onClose={handleNestedClose}>
         <DialogTitle>Aninhar Pergunta</DialogTitle>
-        <DialogContent style={{ width: '600px', maxWidth: '80%', padding: '20px' }}>
+        <DialogContent
+          style={{ width: "600px", maxWidth: "80%", padding: "20px" }}
+        >
           <DialogContentText>Digite a sub-pergunta:</DialogContentText>
           <textarea
             autoFocus
@@ -331,7 +323,7 @@ const FormBuilder = () => {
             heigth="400px"
             variant="standard"
             value={nestedQuestion}
-            style={{ width: '465px', height: '147px' }}
+            style={{ width: "465px", height: "147px" }}
             onChange={(e) => setNestedQuestion(e.target.value)}
           />
         </DialogContent>
@@ -384,7 +376,7 @@ const styles = {
     maxWidth: "150px",
   },
   buttonWithMargin: {
-    padding: "8px 10px", // Padding horizontal diminuído
+    padding: "8px 10px",
     fontSize: "16px",
     backgroundColor: "#34a853",
     color: "#FFF",
@@ -392,9 +384,9 @@ const styles = {
     borderRadius: "4px",
     minWidth: "100px",
     cursor: "pointer",
-    marginRight: "20px", // Espaçamento aumentado
+    marginRight: "20px",
     "&:hover": {
-      backgroundColor: "#45a049", // Verde claro no hover
+      backgroundColor: "#45a049",
     },
   },
   button: {
