@@ -27,9 +27,9 @@ const styles = {
     maxWidth: "80%",
     width: "34%",
     flexWrap: "nowrap",
-    alignItems: "center", // Centraliza verticalmente
-    justifyContent: "center", // Centraliza horizontalmente
-    gap: "10px", // Espaçamento entre o textarea e o botão
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "10px",
   },
   input: {
     padding: "8px",

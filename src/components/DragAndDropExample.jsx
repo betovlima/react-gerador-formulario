@@ -6,7 +6,7 @@ import { useDrag, useDrop } from "react-dnd";
 const DraggableItem = ({ name, index, options }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "ITEM",
-    item: { name, index, options }, // Inclui as opções no item
+    item: { name, index, options },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -107,7 +107,7 @@ const DragAndDropExample = () => {
               key={index}
               name={item.name}
               index={index}
-              options={item.options} // Passa as opções como prop
+              options={item.options}
             />
           ))}
         </div>

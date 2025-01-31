@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
 import { saveAs } from "file-saver";
 import Answer from "./Answer";
 import QuestionList from "./QuestionList";
@@ -45,6 +44,14 @@ const FormBuilder = () => {
             label: answer,
           };
         }),
+        nestedQuestions: question.nestedQuestions ? question.nestedQuestions.map(nestedQuestion => ({
+          text: nestedQuestion.text,
+          answers: nestedQuestion.answers.map((answer) => ({
+            type: 'radio',
+            value: answer,
+            label: answer,
+          }))
+        })) : undefined
       })),
     };
     const jsonString = JSON.stringify(data, null, 2);
@@ -66,9 +73,9 @@ const FormBuilder = () => {
       />
 
       <div>
-        <Button onClick={saveToJson} className="button">
+        <button onClick={saveToJson} className="button">
           Salvar JSON
-        </Button>
+        </button>
       </div>
     </div>
   );

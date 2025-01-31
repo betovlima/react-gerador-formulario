@@ -1,5 +1,4 @@
 import { RadioGroup } from "@mui/material";
-import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -30,13 +29,14 @@ const QuestionList = ({ questions, setQuestions }) => {
     setNestingIndex(index);
   };
 
-  const addAnswer = (index) => {
-    handleClickOpen(index);
+  const addAnswer = (parentIndex, nestedIndex) => {
+    handleClickOpen(parentIndex, nestedIndex);
   };
 
-  const handleClickOpen = (index) => {
+  const handleClickOpen = (parentIndex, nestedIndex) => {
     setOpen(true);
-    setAnsweringIndex(index);
+    setAnsweringIndex(parentIndex);
+    setNestingIndex(nestedIndex);
   };
 
   useEffect(() => {
@@ -49,10 +49,20 @@ const QuestionList = ({ questions, setQuestions }) => {
 
   const handleAnswer = () => {
     const newQuestions = [...questions];
-    newQuestions[answeringIndex].answers = selectedAnswer;
+    if (
+      nestingIndex !== null &&
+      newQuestions[answeringIndex].nestedQuestions &&
+      newQuestions[answeringIndex].nestedQuestions[nestingIndex]
+    ) {
+      newQuestions[answeringIndex].nestedQuestions[nestingIndex].answers =
+        selectedAnswer;
+    } else if (nestingIndex === null) {
+      newQuestions[answeringIndex].answers = selectedAnswer;
+    }
     setQuestions(newQuestions);
     setOpen(false);
     setSelectedAnswer([]);
+    setNestingIndex(null);
   };
 
   const handleCheckboxChange = (event) => {
@@ -165,18 +175,41 @@ const QuestionList = ({ questions, setQuestions }) => {
             <div style={{ marginLeft: "20px" }}>
               {question.nestedQuestions.map((nestedQuestion, nestedIndex) => (
                 <div key={nestedIndex} className="question">
-                  {/* Renderiza a sub-pergunta */}
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      aria-label="respostas"
+                      name={`respostas-${index}`}
+                      value={nestedQuestion.selectedAnswers}
+                      onChange={(e) => {
+                        const newQuestions = [...questions];
+                        newQuestions[index].selectedAnswers = e.target.value;
+                        setQuestions(newQuestions);
+                      }}
+                    >
+                      {nestedQuestion.answers.map((answer, answerIndex) => (
+                        <FormControlLabel
+                          key={answerIndex}
+                          value={answer}
+                          control={<Radio />}
+                          label={answer}
+                        />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <h3>{nestedQuestion.text}</h3>
-
-                  {/* Renderiza as respostas da sub-pergunta, se houver */}
-                  {/*... */}
+                  <button
+                    onClick={() => addAnswer(index, nestedIndex)}
+                    className="button"
+                  >
+                    Adicionar Resposta
+                  </button>{" "}
                 </div>
               ))}
             </div>
           )}
           {
             <div>
-              <button onClick={() => addAnswer(index)} className="button">
+              <button onClick={() => addAnswer(index, null)} className="button">
                 Adicionar Resposta
               </button>
               <button
@@ -214,8 +247,12 @@ const QuestionList = ({ questions, setQuestions }) => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleAnswer}>Adicionar</Button>
+          <button onClick={handleClose} className="button">
+            Cancelar
+          </button>
+          <button onClick={handleAnswer} className="button">
+            Adicionar
+          </button>
         </DialogActions>
       </Dialog>
 
@@ -240,8 +277,8 @@ const QuestionList = ({ questions, setQuestions }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleNestedClose}>Cancelar</Button>
-          <Button onClick={addNestedQuestion}>Adicionar</Button>
+          <button onClick={handleNestedClose} className="button">Cancelar</button>
+          <button onClick={addNestedQuestion} className="button">Adicionar</button>
         </DialogActions>
       </Dialog>
     </div>
