@@ -175,6 +175,7 @@ const QuestionList = ({ questions, setQuestions }) => {
             <div style={{ marginLeft: "20px" }}>
               {question.nestedQuestions.map((nestedQuestion, nestedIndex) => (
                 <div key={nestedIndex} className="question">
+                  <h3>{nestedQuestion.text}</h3>
                   <FormControl component="fieldset">
                     <RadioGroup
                       aria-label="respostas"
@@ -196,7 +197,6 @@ const QuestionList = ({ questions, setQuestions }) => {
                       ))}
                     </RadioGroup>
                   </FormControl>
-                  <h3>{nestedQuestion.text}</h3>
                   <button
                     onClick={() => addAnswer(index, nestedIndex)}
                     className="button"
@@ -277,8 +277,12 @@ const QuestionList = ({ questions, setQuestions }) => {
           />
         </DialogContent>
         <DialogActions>
-          <button onClick={handleNestedClose} className="button">Cancelar</button>
-          <button onClick={addNestedQuestion} className="button">Adicionar</button>
+          <button onClick={handleNestedClose} className="button">
+            Cancelar
+          </button>
+          <button onClick={addNestedQuestion} className="button">
+            Adicionar
+          </button>
         </DialogActions>
       </Dialog>
     </div>
