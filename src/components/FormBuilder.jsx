@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import Answer from "./Answer";
 import QuestionList from "./QuestionList";
+import jsPDF from 'jspdf';
+
+
 import './styles.css';
 
 const FormBuilder = () => {
@@ -59,6 +62,44 @@ const FormBuilder = () => {
     saveAs(blob, "perguntas_e_respostas.json");
   };
 
+  const generatePdf = () => {
+    const doc = new jsPDF();
+  
+    doc.setFontSize(20);
+    doc.text("Questionário de Risco Socioambiental", 20, 20);
+  
+    let y = 40;
+    questions.forEach((question, index) => {
+      doc.setFontSize(16);
+      doc.text(`${index + 1}. ${question.text}`, 20, y);
+      y += 10;
+  
+      question.answers.forEach((answer) => {
+        doc.setFontSize(12);
+        doc.text(`       ( ) ${answer}`, 30, y);
+        y += 10;
+      });
+  
+      if (question.nestedQuestions) {
+        question.nestedQuestions.forEach((nestedQuestion, nestedIndex) => {
+          doc.setFontSize(14);
+          doc.text(`  ${nestedIndex + 1}. ${nestedQuestion.text}`, 30, y);
+          y += 10;
+  
+          nestedQuestion.answers.forEach((answer) => {
+            doc.setFontSize(12);
+            doc.text(`    ( ) ${answer}`, 40, y);
+            y += 10;
+          });
+        });
+      }
+  
+      y += 10;
+    });
+  
+    doc.save("questionario.pdf");
+  };
+
   return (
     <div className="container">
       <h1 className="title">
@@ -75,6 +116,11 @@ const FormBuilder = () => {
       <div>
         <button onClick={saveToJson} className="button">
           Salvar JSON
+        </button>
+      </div>
+      <div>
+        <button onClick={generatePdf} className="button">
+          Gerar PDF
         </button>
       </div>
     </div>
