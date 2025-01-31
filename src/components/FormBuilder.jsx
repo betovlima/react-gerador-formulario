@@ -62,7 +62,7 @@ const FormBuilder = () => {
   return (
     <div className="container">
       <h1 className="title">
-        TEMPLATE PARA QUESTIONÁRIO RISCO SOCIOAMBIENTAL
+        TEMPLATE PARA QUESTIONÁRIO
       </h1>
       <QuestionList questions={questions} setQuestions={setQuestions} />
       <br />
